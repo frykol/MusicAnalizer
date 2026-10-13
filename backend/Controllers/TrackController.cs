@@ -39,7 +39,7 @@ namespace backend.Controllers
         public async Task<ActionResult<Track>> CreateTrack([FromBody] TrackCreateDto createDto)
         {
             var track = await _service.CreateAsync(createDto);
-            return CreatedAtAction(nameof(GetTrackById), new {id = track.Id}, track);
+            return CreatedAtAction(nameof(GetTrackById), new {id = track.id}, track);
         }
 
         [HttpPut("{id:int}")]

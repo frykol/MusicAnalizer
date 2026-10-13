@@ -22,7 +22,7 @@ public class TrackRepository : ITrackRepository
 
     public async Task<Track?> GetByIdAsync(int id)
     {
-        return await _context.Tracks.AsNoTracking().FirstOrDefaultAsync(track => track.Id == id);
+        return await _context.Tracks.FirstOrDefaultAsync(track => track.Id == id);
     }
 
     public async Task<Track> CreateAsync(Track createdTrack)
@@ -32,16 +32,9 @@ public class TrackRepository : ITrackRepository
         return createdTrack;
     }
 
-    public async Task<Track?> UpdateAsync(int id, TrackUpdateDto trackUpdate, Action<TrackUpdateDto, Track> mapAction)
+    public async Task<int> SaveChangesAsync()
     {
-        var track = await _context.Tracks.FindAsync(id);
-        if (track is null)
-            return null;
-
-        mapAction(trackUpdate, track);
-
-        await _context.SaveChangesAsync();
-        return track;
+        return await _context.SaveChangesAsync();
     }
 
     public async Task<bool> DeleteAsync(int id)

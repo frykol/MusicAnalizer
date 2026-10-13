@@ -6,9 +6,9 @@ namespace backend.Services;
 
 public interface ITrackService
 {
-    Task<List<Track>> GetAllAsync();
-    Task<Track?> GetByIdAsync(int id);
-    Task<Track> CreateAsync(TrackCreateDto createdTrack);
-    Task<Track?> UpdateAsync(int id, TrackUpdateDto trackUpdate);
+    Task<List<TrackResponseDto>> GetAllAsync();
+    Task<TrackResponseDto?> GetByIdAsync(int id);
+    Task<TrackResponseDto> CreateAsync(TrackCreateDto createdTrack);
+    Task<TrackResponseDto?> UpdateAsync(int id, TrackUpdateDto trackUpdate);
     Task<bool> DeleteAsync(int id);
 }

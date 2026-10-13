@@ -4,6 +4,7 @@ using backend.Dtos;
 using backend.Repositories;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Components.Web;
+using backend.Mappers;
 
 namespace backend.Services;
 
@@ -16,32 +17,46 @@ public class TrackService : ITrackService
         _repository = repository;
     }
 
-    public async Task<List<Track>> GetAllAsync()
+    public async Task<List<TrackResponseDto>> GetAllAsync()
     {
-        return await _repository.GetAllAsync();
+        var tracks = await _repository.GetAllAsync();
+        return tracks.Select(track =>
+        {
+            return TrackMapper.toResponseDto(track);
+        }).ToList();
     }
 
-    public async Task<Track?> GetByIdAsync(int id)
+    public async Task<TrackResponseDto?> GetByIdAsync(int id)
     {
-        return await _repository.GetByIdAsync(id);
+        var track = await _repository.GetByIdAsync(id);
+
+        if (track is null)
+            return null;
+
+        return TrackMapper.toResponseDto(track);
     }
 
-    public async Task<Track> CreateAsync(TrackCreateDto createdTrack)
+    public async Task<TrackResponseDto> CreateAsync(TrackCreateDto createdTrack)
     {
         Track t = new Track{Title = createdTrack.Title, Genre = createdTrack.Genre};
 
         Track created = await _repository.CreateAsync(t);
 
-        return created;
+        return TrackMapper.toResponseDto(created);
     }
 
-    public async Task<Track?> UpdateAsync(int id, TrackUpdateDto trackUpdate)
+    public async Task<TrackResponseDto?> UpdateAsync(int id, TrackUpdateDto trackUpdate)
     {
-        return await _repository.UpdateAsync(id, trackUpdate, (src, dest) =>
-        {
-           dest.Title = src.Title;
-           dest.Genre = src.Genre;
-        });
+        var toUpdate = await _repository.GetByIdAsync(id);
+        if (toUpdate is null)
+            return null;
+
+        toUpdate.Title = trackUpdate.Title;
+        toUpdate.Genre = trackUpdate.Genre;
+
+        await _repository.SaveChangesAsync();
+
+        return TrackMapper.toResponseDto(toUpdate);
     }
 
     public async Task<bool> DeleteAsync(int id)
