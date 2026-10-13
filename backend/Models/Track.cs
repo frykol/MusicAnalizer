@@ -11,4 +11,5 @@ public class Track
     public int ArtistId { get; set; }
 
     public Artist Artist { get; set; } = null!;
+    public AudioFile? AudioFile {get; set;}
 }

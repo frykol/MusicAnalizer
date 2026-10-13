@@ -58,3 +58,4 @@ nunit-*.xml
 
 .vscode/
 *.http
+Storage/

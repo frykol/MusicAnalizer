@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using backend.Dtos;
 using backend.Dtos.Track;
 using backend.Models;
@@ -12,10 +13,12 @@ namespace backend.Controllers
     public class TrackController : ControllerBase
     {
         private readonly ITrackService _service;
+        private readonly IAudioFileService _audioFileService;
 
-        public TrackController(ITrackService service)
+        public TrackController(ITrackService service, IAudioFileService audioFileService)
         {
             _service = service;
+            _audioFileService = audioFileService;
         }
 
         [HttpGet]
@@ -61,6 +64,13 @@ namespace backend.Controllers
             if(!isDeleted)
                 return NotFound();
             return NoContent();
+        }
+
+        [HttpPost("file")]
+        public async Task<IActionResult> UploadFile([FromForm] IFormFile file)
+        {            
+            var fileName = await _audioFileService.SaveAsync(file);
+            return Ok(fileName);
         }
     }
 }

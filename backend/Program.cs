@@ -18,6 +18,8 @@ builder.Services.AddScoped<ITrackService, TrackService>();
 builder.Services.AddScoped<IArtistRepository, ArtistRepository>();
 builder.Services.AddScoped<IArtistService, ArtistService>();
 
+builder.Services.AddScoped<IAudioFileService, AudioFileService>();
+
 var app = builder.Build();
 
 app.MapControllers();

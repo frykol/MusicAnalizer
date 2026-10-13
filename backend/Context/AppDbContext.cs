@@ -11,4 +11,6 @@ public class AppDbContext : DbContext
 
     public DbSet<Artist> Artists => Set<Artist>();
     public DbSet<Track> Tracks => Set<Track>();
+
+    public DbSet<AudioFile> AudioFiles => Set<AudioFile>();
 }
