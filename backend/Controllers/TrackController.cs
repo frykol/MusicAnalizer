@@ -1,4 +1,5 @@
-using backend.Dtos;
+using backend.Models;
+using backend.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,15 +9,17 @@ namespace backend.Controllers
     [ApiController]
     public class TrackController : ControllerBase
     {
-        private readonly List<TrackDto> tracks = [
-        new (1, "Seima", "Metal"),  
-        new (2, "dipa", "Pop"),  
-        new (3, "Sasdeima", "Rock"),  
-        ];
+        private readonly ITrackService _service;
+
+        public TrackController(ITrackService service)
+        {
+            _service = service;
+        }
 
         [HttpGet]
-        public ActionResult<IEnumerable<TrackDto>> GetTracks()
+        public async Task<ActionResult<List<Track>>> GetTracks()
         {
+            var tracks = await _service.GetAllAsync();
             return Ok(tracks);
         }
     }

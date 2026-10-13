@@ -1,31 +1,22 @@
+using backend.Context;
 using backend.Dtos;
+using backend.Repositories;
+using backend.Services;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Services.AddControllers();
+
+builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(
+  builder.Configuration.GetConnectionString("DefaultConnection")
+));
+
+builder.Services.AddScoped<ITrackRepository, TrackRepository>();
+builder.Services.AddScoped<ITrackService, TrackService>();
+
 var app = builder.Build();
 
-List<TrackDto> tracks = [
-  new (1, "Seima", "Metal"),  
-  new (2, "dipa", "Pop"),  
-  new (3, "Sasdeima", "Rock"),  
-];
-
-app.MapGet("/tracks", () => tracks);
-
-app.MapGet("/tracks/{id}", (int id) => 
-{
-    return tracks.Find(track => track.Id == id);
-}).WithName("GetTrack");
-
-app.MapPost("/tracks", (TrackCreateDto trackCreate) =>
-{
-  TrackDto t = new (tracks.Count + 1, trackCreate.Name, trackCreate.Genre);
-  tracks.Add(t);
-  return Results.CreatedAtRoute("GetTrack", new {id = t.Id}, t);
-});
-
-app.UseHttpsRedirection();
-app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
