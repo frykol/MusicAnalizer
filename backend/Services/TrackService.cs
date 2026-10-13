@@ -12,10 +12,12 @@ namespace backend.Services;
 public class TrackService : ITrackService
 {
     private readonly ITrackRepository _repository;
+    private readonly IArtistRepository _artistRepository;
 
-    public TrackService(ITrackRepository repository)
+    public TrackService(ITrackRepository repository, IArtistRepository artistRepository)
     {
         _repository = repository;
+        _artistRepository = artistRepository;
     }
 
     public async Task<List<TrackResponseDto>> GetAllAsync()
@@ -34,9 +36,13 @@ public class TrackService : ITrackService
         return TrackMapper.toDetailedResponseDto(track);
     }
 
-    public async Task<TrackResponseDto> CreateAsync(TrackCreateDto createdTrack)
+    public async Task<TrackResponseDto?> CreateAsync(TrackCreateDto trackCreate)
     {
-        Track t = new Track{Title = createdTrack.Title, Genre = createdTrack.Genre};
+        var artist = await _artistRepository.GetByIdAsync(trackCreate.ArtistId);
+        if (artist is null)
+            return null;
+
+        Track t = new Track{Title = trackCreate.Title, Genre = trackCreate.Genre, ArtistId = trackCreate.ArtistId, Artist = artist};
 
         Track created = await _repository.CreateAsync(t);
 

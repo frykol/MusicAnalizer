@@ -2,5 +2,6 @@ namespace backend.Dtos;
 
 public record class TrackCreateDto(
     string Title,
-    string Genre
+    string Genre,
+    int ArtistId
 );

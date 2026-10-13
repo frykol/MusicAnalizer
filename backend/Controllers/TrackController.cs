@@ -40,6 +40,8 @@ namespace backend.Controllers
         public async Task<ActionResult<TrackResponseDto>> CreateTrack([FromBody] TrackCreateDto createDto)
         {
             var track = await _service.CreateAsync(createDto);
+            if (track is null)
+                return NotFound("Artist not found");
             return CreatedAtAction(nameof(GetTrackById), new {id = track.id}, track);
         }
 
