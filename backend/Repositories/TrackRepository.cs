@@ -17,12 +17,12 @@ public class TrackRepository : ITrackRepository
 
     public async Task<List<Track>> GetAllAsync()
     {
-        return await _context.Tracks.AsNoTracking().ToListAsync();
+        return await _context.Tracks.AsNoTracking().Include(t => t.Artist).ToListAsync();
     }
 
     public async Task<Track?> GetByIdAsync(int id)
     {
-        return await _context.Tracks.FirstOrDefaultAsync(track => track.Id == id);
+        return await _context.Tracks.Include(t => t.Artist).FirstOrDefaultAsync(track => track.Id == id);
     }
 
     public async Task<Track> CreateAsync(Track createdTrack)

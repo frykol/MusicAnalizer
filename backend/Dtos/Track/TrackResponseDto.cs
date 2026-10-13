@@ -1,3 +1,5 @@
+using backend.Dtos.Artist;
+
 namespace backend.Dtos;
 
 public record class TrackResponseDto(

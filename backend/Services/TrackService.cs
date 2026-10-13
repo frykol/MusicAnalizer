@@ -1,6 +1,7 @@
 using System;
 using backend.Models;
 using backend.Dtos;
+using backend.Dtos.Track;
 using backend.Repositories;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Components.Web;
@@ -20,20 +21,17 @@ public class TrackService : ITrackService
     public async Task<List<TrackResponseDto>> GetAllAsync()
     {
         var tracks = await _repository.GetAllAsync();
-        return tracks.Select(track =>
-        {
-            return TrackMapper.toResponseDto(track);
-        }).ToList();
+        return tracks.Select(TrackMapper.toResponseDto).ToList();
     }
 
-    public async Task<TrackResponseDto?> GetByIdAsync(int id)
+    public async Task<TrackDetailedResponseDto?> GetByIdAsync(int id)
     {
         var track = await _repository.GetByIdAsync(id);
 
         if (track is null)
             return null;
 
-        return TrackMapper.toResponseDto(track);
+        return TrackMapper.toDetailedResponseDto(track);
     }
 
     public async Task<TrackResponseDto> CreateAsync(TrackCreateDto createdTrack)

@@ -1,4 +1,5 @@
 using backend.Dtos;
+using backend.Dtos.Track;
 using backend.Models;
 using backend.Services;
 using Microsoft.AspNetCore.Http;
@@ -18,14 +19,14 @@ namespace backend.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Track>>> GetTracks()
+        public async Task<ActionResult<List<TrackResponseDto>>> GetTracks()
         {
             var tracks = await _service.GetAllAsync();
             return Ok(tracks);
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<Track>> GetTrackById(int id)
+        public async Task<ActionResult<TrackDetailedResponseDto>> GetTrackById(int id)
         {
             var track = await _service.GetByIdAsync(id);
 
@@ -36,14 +37,14 @@ namespace backend.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Track>> CreateTrack([FromBody] TrackCreateDto createDto)
+        public async Task<ActionResult<TrackResponseDto>> CreateTrack([FromBody] TrackCreateDto createDto)
         {
             var track = await _service.CreateAsync(createDto);
             return CreatedAtAction(nameof(GetTrackById), new {id = track.id}, track);
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<Track>> UpdateTrack(int id, [FromBody] TrackUpdateDto updateDto)
+        public async Task<ActionResult<TrackResponseDto>> UpdateTrack(int id, [FromBody] TrackUpdateDto updateDto)
         {
             var track = await _service.UpdateAsync(id, updateDto);
             if (track is null)
