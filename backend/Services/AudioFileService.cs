@@ -21,24 +21,21 @@ public class AudioFileService : IAudioFileService
         if (file is null || file.Length == 0)
             return "No file";
 
-        AudioFileType audioType = AudioFileValidator.isMp3(file);
-
-        if (audioType == AudioFileType.Unknown)
-            return "Not mp3";
-
-        //AudioFileMetadataExtractor.Mp3Metadata(file, audioType);
-
-        // var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
-        // var fileName = $"{Guid.NewGuid():N}{extension}";
 
         var fileName = FileNameGenerator.GenerateName(file);
 
         var fullPath = Path.Combine(_storagePath, fileName);
 
-        // await using var stream = new FileStream(fullPath, FileMode.CreateNew);
-        // await file.CopyToAsync(stream);
+        await LocalFileManager.SaveFileAsync(file, fullPath);
 
-        LocalFileSaver.SaveFile(file, fullPath);
+        var audioFileValidatorResult = await AudioFileValidator.isMusicFileVaild(fullPath);
+        
+        if (!audioFileValidatorResult.IsSucces)
+        {
+            LocalFileManager.DeleteFile(fullPath);
+            return "Error for test";
+        }
+
 
         using var metadata = await AudioFileMetadata.GetMetadataAsync(fullPath);
 
