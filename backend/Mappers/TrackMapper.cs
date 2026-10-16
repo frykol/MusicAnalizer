@@ -1,5 +1,6 @@
 using System;
 using backend.Dtos;
+using backend.Dtos.AudioFile;
 using backend.Dtos.Track;
 using backend.Models;
 
@@ -14,6 +15,9 @@ public static class TrackMapper
 
     public static TrackDetailedResponseDto toDetailedResponseDto(Track track)
     {
-        return new TrackDetailedResponseDto(track.Id, track.Title, track.Genre, ArtistMapper.toResponseDto(track.Artist));
+        AudioFileResponseDto? audioFileResponse = null;
+        if (track.AudioFile is not null)
+            audioFileResponse = AudioFileMapper.toResponseDto(track.AudioFile);
+        return new TrackDetailedResponseDto(track.Id, track.Title, track.Genre, ArtistMapper.toResponseDto(track.Artist), audioFileResponse);
     }
 }

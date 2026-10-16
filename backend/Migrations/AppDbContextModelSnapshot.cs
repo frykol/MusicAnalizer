@@ -47,9 +47,32 @@ namespace backend.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("Bitrate")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ChannelLayout")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Channels")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Codec")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<double>("Duration")
+                        .HasColumnType("double precision");
+
                     b.Property<string>("OriginalFileName")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("SampleRate")
+                        .HasColumnType("integer");
+
+                    b.Property<long>("Size")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("StorageKey")
                         .IsRequired()

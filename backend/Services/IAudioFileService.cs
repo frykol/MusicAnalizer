@@ -4,5 +4,5 @@ namespace backend.Services;
 
 public interface IAudioFileService
 {
-    Task<AudioFileServiceResult> SaveAsync(IFormFile file);
+    Task<AudioFileServiceResult> SaveAsync(int trackId, IFormFile file);
 }

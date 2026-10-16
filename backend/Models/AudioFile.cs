@@ -11,11 +11,11 @@ public class AudioFile
 
     public DateTime UploadedDate { get; set; } = DateTime.UtcNow;
 
-    public float Duration { get; set; }
+    public double Duration { get; set; }
 
     public string Codec { get; set; } = String.Empty;
 
-    public int Bitrate { get; set; }
+    public int? Bitrate { get; set; }
 
     public int SampleRate { get; set; }
 
@@ -23,7 +23,7 @@ public class AudioFile
 
     public string ChannelLayout { get; set; } = String.Empty;
 
-    public int Size { get; set; }
+    public long Size { get; set; }
 
     
 

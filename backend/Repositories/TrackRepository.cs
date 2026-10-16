@@ -22,7 +22,7 @@ public class TrackRepository : ITrackRepository
 
     public async Task<Track?> GetByIdAsync(int id)
     {
-        return await _context.Tracks.Include(t => t.Artist).FirstOrDefaultAsync(track => track.Id == id);
+        return await _context.Tracks.Include(t => t.Artist).Include(t => t.AudioFile).FirstOrDefaultAsync(track => track.Id == id);
     }
 
     public async Task<Track> CreateAsync(Track createdTrack)

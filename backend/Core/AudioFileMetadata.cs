@@ -32,8 +32,8 @@ public static class AudioFileMetadata
 
         startInfo.ArgumentList.Add("-v");
         startInfo.ArgumentList.Add("error");
-        startInfo.ArgumentList.Add("-show_entries");
-        startInfo.ArgumentList.Add("format=duration:stream=codec_name,sample_rate,channels");
+        startInfo.ArgumentList.Add("-show_streams");
+        startInfo.ArgumentList.Add("-show_format");
         startInfo.ArgumentList.Add("-of");
         startInfo.ArgumentList.Add("json");
         startInfo.ArgumentList.Add(path);

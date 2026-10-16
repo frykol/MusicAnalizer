@@ -4,6 +4,7 @@ using backend.Dtos.Track;
 using backend.Models;
 using backend.Services;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
@@ -66,16 +67,18 @@ namespace backend.Controllers
             return NoContent();
         }
 
-        [HttpPost("file")]
-        public async Task<IActionResult> UploadFile([FromForm] IFormFile file)
+        [HttpPost("{id:int}/file")]
+        public async Task<IActionResult> UploadFile(int id, [FromForm] IFormFile file)
         {            
-            var audioFileServiceResult = await _audioFileService.SaveAsync(file);
+            var audioFileServiceResult = await _audioFileService.SaveAsync(id, file);
             return audioFileServiceResult switch
             {
                 AudioFileServiceResult.IsSucces => Ok("File uploaded successfully"),
                 AudioFileServiceResult.IsNotMusicFile => BadRequest("The uploaded file is not a valid music file"),
                 AudioFileServiceResult.IsTooLong => BadRequest("The uploaded file is too long"),
                 AudioFileServiceResult.IsTooShort => BadRequest("The uploaded file is too short"),
+                AudioFileServiceResult.InvalidMetadata => BadRequest("The uploaded file has invalid metadata"),
+                AudioFileServiceResult.TrackNotFound => NotFound("Track not found"),
                 _ => StatusCode(500, "An unexpected error occurred")
             };
         }
