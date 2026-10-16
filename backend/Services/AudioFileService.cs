@@ -1,6 +1,7 @@
 using System;
 using backend.Core;
-using backend.Core.File;
+using backend.Infrastructure.File;
+using backend.Infrastructure.Media;
 using backend.Services.Results;
 
 namespace backend.Services;
@@ -22,7 +23,7 @@ public class AudioFileService : IAudioFileService
         if (file is null || file.Length == 0)
             return AudioFileServiceResult.IsNotMusicFile;
 
-        var fileName = FileNameGenerator.GenerateName(file);
+        var fileName = FileNameGenerator.GenerateName(file.FileName);
 
         var fullPath = Path.Combine(_storagePath, fileName);
 
@@ -39,9 +40,17 @@ public class AudioFileService : IAudioFileService
 
         using var metadata = await AudioFileMetadata.GetMetadataAsync(fullPath);
 
-        string duration = metadata.RootElement.GetProperty("format").GetProperty("duration").GetString()!;
+        if (!metadata.IsSucces)
+        {
+            LocalFileManager.DeleteFile(fullPath);
+            return AudioFileServiceResult.IsNotMusicFile;
+        }
 
-        Console.WriteLine($"Duration: {duration}");
+        FfprobeMetadataReader.Read(metadata.Value!);
+
+        //ONLY FOR TESTING
+        LocalFileManager.DeleteFile(fullPath);
+
 
         return AudioFileServiceResult.IsSucces;
     }

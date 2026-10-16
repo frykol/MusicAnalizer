@@ -4,9 +4,22 @@ using System.Text.Json;
 
 namespace backend.Core;
 
+public record class AudioFileMetadataResponse : IDisposable
+{
+    public bool IsSucces {get; init;}
+    public string ErrorMessage {get; init;} = String.Empty;  
+
+    public JsonDocument? Value {get; init;}
+
+
+    public void Dispose()
+    {
+        Value?.Dispose();
+    }
+}
 public static class AudioFileMetadata
 {
-    public static async Task<JsonDocument> GetMetadataAsync(string path)
+    public static async Task<AudioFileMetadataResponse> GetMetadataAsync(string path)
     {
         var startInfo = new ProcessStartInfo
         {
@@ -25,7 +38,10 @@ public static class AudioFileMetadata
         startInfo.ArgumentList.Add("json");
         startInfo.ArgumentList.Add(path);
 
-        using var process = Process.Start(startInfo) ?? throw new Exception("Couldn't start FFprobe");
+        using var process = Process.Start(startInfo);
+
+        if (process is null)
+            return new AudioFileMetadataResponse{IsSucces = false, ErrorMessage="Couldn't start FFprobe"};
 
         var outputTask = process.StandardOutput.ReadToEndAsync();
         var errorTask = process.StandardError.ReadToEndAsync();
@@ -36,8 +52,10 @@ public static class AudioFileMetadata
         string error = await errorTask;
 
         if (process.ExitCode != 0)
-            throw new Exception($"FFprobe error: {error}");
+            return new AudioFileMetadataResponse{IsSucces = false, ErrorMessage=$"FFprobe error: {error}"};
 
-        return JsonDocument.Parse(output);
+        var outputJson = JsonDocument.Parse(output);
+
+        return new AudioFileMetadataResponse{IsSucces = true, Value = outputJson};
     }
 }
