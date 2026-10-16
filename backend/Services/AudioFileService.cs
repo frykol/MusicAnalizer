@@ -1,6 +1,7 @@
 using System;
 using backend.Core;
 using backend.Core.File;
+using backend.Services.Results;
 
 namespace backend.Services;
 
@@ -16,11 +17,10 @@ public class AudioFileService : IAudioFileService
 
         Directory.CreateDirectory(_storagePath);
     }
-    public async Task<string> SaveAsync(IFormFile file){
+    public async Task<AudioFileServiceResult> SaveAsync(IFormFile file){
 
         if (file is null || file.Length == 0)
-            return "No file";
-
+            return AudioFileServiceResult.IsNotMusicFile;
 
         var fileName = FileNameGenerator.GenerateName(file);
 
@@ -33,7 +33,7 @@ public class AudioFileService : IAudioFileService
         if (!audioFileValidatorResult.IsSucces)
         {
             LocalFileManager.DeleteFile(fullPath);
-            return "Error for test";
+            return AudioFileServiceResult.IsNotMusicFile;
         }
 
 
@@ -43,6 +43,6 @@ public class AudioFileService : IAudioFileService
 
         Console.WriteLine($"Duration: {duration}");
 
-        return fileName;
+        return AudioFileServiceResult.IsSucces;
     }
 }

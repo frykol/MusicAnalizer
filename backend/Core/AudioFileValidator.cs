@@ -47,6 +47,7 @@ public static class AudioFileValidator
         startInfo.ArgumentList.Add("-xerror");
         startInfo.ArgumentList.Add("-v");
         startInfo.ArgumentList.Add("error");
+        startInfo.ArgumentList.Add("-vn");
         startInfo.ArgumentList.Add("-i");
         startInfo.ArgumentList.Add(filePath);
         startInfo.ArgumentList.Add("-f");
@@ -54,7 +55,7 @@ public static class AudioFileValidator
         startInfo.ArgumentList.Add("-");
 
         using var process = Process.Start(startInfo);
-        if (process == null)
+        if (process is null)
             return new AudioFileValidatorResult{IsSucces = false, ErrorMessage = "Could not start ffmpeg"};
 
         var outputTask = process.StandardOutput.ReadToEndAsync();

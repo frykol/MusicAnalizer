@@ -69,8 +69,15 @@ namespace backend.Controllers
         [HttpPost("file")]
         public async Task<IActionResult> UploadFile([FromForm] IFormFile file)
         {            
-            var fileName = await _audioFileService.SaveAsync(file);
-            return Ok(fileName);
+            var audioFileServiceResult = await _audioFileService.SaveAsync(file);
+            return audioFileServiceResult switch
+            {
+                AudioFileServiceResult.IsSucces => Ok("File uploaded successfully"),
+                AudioFileServiceResult.IsNotMusicFile => BadRequest("The uploaded file is not a valid music file"),
+                AudioFileServiceResult.IsTooLong => BadRequest("The uploaded file is too long"),
+                AudioFileServiceResult.IsTooShort => BadRequest("The uploaded file is too short"),
+                _ => StatusCode(500, "An unexpected error occurred")
+            };
         }
     }
 }
