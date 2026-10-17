@@ -25,7 +25,7 @@ public class AudioFile
 
     public long Size { get; set; }
 
-    
+    public required string Hash {get; set;}
 
     public int TrackId { get; set; }
     public Track Track { get; set;} = null!;

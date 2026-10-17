@@ -3,6 +3,7 @@ using backend.Dtos;
 using backend.Dtos.Track;
 using backend.Models;
 using backend.Services;
+using backend.Services.Results;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -79,6 +80,7 @@ namespace backend.Controllers
                 AudioFileServiceResult.IsTooShort => BadRequest("The uploaded file is too short"),
                 AudioFileServiceResult.InvalidMetadata => BadRequest("The uploaded file has invalid metadata"),
                 AudioFileServiceResult.TrackNotFound => NotFound("Track not found"),
+                AudioFileServiceResult.FileAlreadyExists => BadRequest("File uploaded already exists"),
                 _ => StatusCode(500, "An unexpected error occurred")
             };
         }

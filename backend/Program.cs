@@ -2,6 +2,7 @@ using backend.Context;
 using backend.Dtos;
 using backend.Repositories;
 using backend.Services;
+using backend.Services.Results;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

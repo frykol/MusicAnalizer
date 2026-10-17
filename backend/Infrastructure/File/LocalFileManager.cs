@@ -17,7 +17,12 @@ public static class LocalFileManager
         }
         catch (Exception ex)
         {
-            throw new Exception($"Couldn't delete file: {filePath}, error: {ex}");
+            throw new Exception($"Couldn't delete file: {filePath}, error: {ex.Message}");
         }
+    }
+
+    public static Stream GetFileStream(string filePath)
+    {
+        return File.OpenRead(filePath);
     }
 }

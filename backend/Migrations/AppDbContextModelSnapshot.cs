@@ -64,6 +64,10 @@ namespace backend.Migrations
                     b.Property<double>("Duration")
                         .HasColumnType("double precision");
 
+                    b.Property<string>("Hash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("OriginalFileName")
                         .IsRequired()
                         .HasColumnType("text");
@@ -85,6 +89,9 @@ namespace backend.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Hash")
+                        .IsUnique();
 
                     b.HasIndex("TrackId")
                         .IsUnique();

@@ -13,4 +13,11 @@ public class AppDbContext : DbContext
     public DbSet<Track> Tracks => Set<Track>();
 
     public DbSet<AudioFile> AudioFiles => Set<AudioFile>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<AudioFile>().HasIndex(a => a.Hash).IsUnique();
+    }
 }

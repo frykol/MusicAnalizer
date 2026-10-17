@@ -6,6 +6,9 @@ using backend.Models;
 using backend.Repositories;
 using backend.Services.Results;
 
+using backend.Dtos.AudioFile;
+using backend.Mappers;
+
 namespace backend.Services;
 
 public class AudioFileService : IAudioFileService
@@ -38,6 +41,18 @@ public class AudioFileService : IAudioFileService
         var fullPath = Path.Combine(_storagePath, fileName);
 
         await LocalFileManager.SaveFileAsync(file, fullPath);
+
+
+        using var stream = LocalFileManager.GetFileStream(fullPath);
+
+        string hash = await Sha256Hasher.ComputeAsync(stream); 
+
+        if (await _repository.ExistsByHashAsync(hash))
+        {
+            LocalFileManager.DeleteFile(fullPath);
+            return AudioFileServiceResult.FileAlreadyExists;
+        }
+
 
         var audioFileValidatorResult = await AudioFileValidator.isMusicFileVaild(fullPath);
         
@@ -84,6 +99,7 @@ public class AudioFileService : IAudioFileService
             Bitrate = audioMetadata.Bitrate,
             SampleRate = audioMetadata.SampleRate,
             Channels = audioMetadata.Channels,
+            Hash = hash,
 
             Track = track,
             TrackId = trackId
@@ -96,5 +112,24 @@ public class AudioFileService : IAudioFileService
 
 
         return AudioFileServiceResult.IsSucces;
+    }
+    public async Task<AudioFileResponseDto?> GetByIdAsync(int id)
+    {
+        var audioFile = await _repository.GetByIdAsync(id);
+        if (audioFile is null)
+            return null;
+
+        return AudioFileMapper.toResponseDto(audioFile);
+    }
+    public async Task<bool> DeleteByIdAsync(int id)
+    {
+        var audioFile = await _repository.GetByIdAsync(id);
+        if (audioFile is null)
+            return false;
+        
+        string filePath = audioFile.StorageKey;
+        await _repository.DeleteAsync(audioFile);
+        LocalFileManager.DeleteFile(filePath);
+        return true;
     }
 }
