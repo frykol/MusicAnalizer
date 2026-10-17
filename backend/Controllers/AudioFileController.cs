@@ -16,6 +16,13 @@ namespace backend.Controllers
             _service = service;
         }
 
+        [HttpGet]
+        public async Task<ActionResult<List<AudioFileResponseDto>>> GetAll()
+        {
+            var audioFiles = await _service.GetAllAsync();
+            return Ok(audioFiles);
+        }
+
         [HttpGet("{id:int}")]
         public async Task<ActionResult<AudioFileResponseDto>> GetById(int id)
         {

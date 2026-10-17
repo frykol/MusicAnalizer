@@ -18,6 +18,12 @@ public class AudioFileRepository : IAudioFileRepository
     {
         return await _context.AudioFiles.AnyAsync(a => a.Hash == hash);
     }
+
+    public async Task<List<AudioFile>> GetAllAsync()
+    {
+        return await _context.AudioFiles.AsNoTracking().ToListAsync();
+    }
+
     public async Task<AudioFile> CreateAsync(AudioFile createdAudioFile)
     {
         _context.AudioFiles.Add(createdAudioFile);

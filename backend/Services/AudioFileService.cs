@@ -113,6 +113,12 @@ public class AudioFileService : IAudioFileService
 
         return AudioFileServiceResult.IsSucces;
     }
+
+    public async Task<List<AudioFileResponseDto>> GetAllAsync()
+    {
+        var audioFiles = await _repository.GetAllAsync();
+        return audioFiles.Select(AudioFileMapper.toResponseDto).ToList();
+    }
     public async Task<AudioFileResponseDto?> GetByIdAsync(int id)
     {
         var audioFile = await _repository.GetByIdAsync(id);
