@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+@theme {
+    --color-background: hsl(240 20% 20%);
+    --color-surface: hsl(240 20% 30%);
+    --color-elevated: hsl(240 20% 40%);
+    --color-text-primary: hsl(240 0% 95%);
+    --color-text-damped: hsl(240 0% 70%);
+}
+
+html{
+    background-color: var(--color-background);
+    color: var(--color-text-primary);
+}
