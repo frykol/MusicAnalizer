@@ -9,7 +9,7 @@
 
 </script>
 
-<div class='border-2 border-gray-700 flex flex-row flex-1'>
+<div class=' flex flex-row flex-1'>
     {#each tracks as track}
         <TrackCard track={track}/>
     {/each}

@@ -20,7 +20,7 @@
 		<div class="sticky top-16 h-[calc(100dvh-4rem)] shrink-0 w-56">
 			<SideBar/>
 		</div>
-		<div class="flex-1 mt-4 mx-10 bg-surface w-full">
+		<div class="flex-1 min-w-0 mt-6 mx-6 bg-surface p-4 rounded-lg">
 			{@render children()}
 		</div>
 	</div>

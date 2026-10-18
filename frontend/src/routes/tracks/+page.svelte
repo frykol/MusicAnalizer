@@ -2,7 +2,7 @@
 	import type { TrackSimple } from "#lib/api/tracks.ts";
     import TrackCard from "#lib/tracks/TrackCard.svelte";
 	import TrackList from "#lib/tracks/TrackList.svelte";
-    import type { PageProps, PageData } from "./$types";
+    import type { PageProps } from "./$types";
 
     let { params, data }: PageProps = $props();
     const tracks : TrackSimple[] = $derived(data.tracks);

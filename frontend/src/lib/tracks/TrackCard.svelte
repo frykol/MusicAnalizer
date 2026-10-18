@@ -7,8 +7,8 @@
 
     let { track }: Props = $props();
 </script>
-
-<div class="m-4 flex w-64 flex-col rounded-sm bg-elevated">
+<a href="/tracks/{track.id}">
+<div class="mx-2 flex w-64 flex-col rounded-sm bg-elevated">
 
     <div class="flex min-w-0 justify-between gap-2 px-2 py-1">
         <h1 class="min-w-0 flex-1 wrap-break-word text-xl">
@@ -32,3 +32,4 @@
         Genre: <b>{track.genre}</b>
     </p>
 </div>
+</a>
