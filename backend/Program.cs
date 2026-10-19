@@ -13,6 +13,14 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(
   builder.Configuration.GetConnectionString("DefaultConnection")
 ));
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Frontend", policy =>
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod());
+});
+
 builder.Services.AddScoped<ITrackRepository, TrackRepository>();
 builder.Services.AddScoped<ITrackService, TrackService>();
 
@@ -25,5 +33,5 @@ builder.Services.AddScoped<IAudioFileService, AudioFileService>();
 var app = builder.Build();
 
 app.MapControllers();
-
+app.UseCors("Frontend");
 app.Run();

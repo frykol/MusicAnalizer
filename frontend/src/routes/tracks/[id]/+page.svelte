@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { TrackDetailed } from "#lib/api/tracks.ts";
     import type {PageProps} from "./$types"
+    import Button from "#lib/ui/Button.svelte";
 
     let {data}: PageProps = $props();
     let track: TrackDetailed = $derived(data.track);
@@ -16,7 +17,7 @@
 </script>
 <div class="flex flex-col h-dvh">
     <div id="top" class="flex flex-row border-b-2 border-b-text-damped pb-2 items-center">
-        <a href="/tracks" class="text-xl border-2 border-elevated px-2 py-1 rounded-md cursor-pointer hover:bg-elevated transition-colors">Back</a>
+        <Button name="Back" href="/tracks" />
         <div class="flex flex-1 justify-center">
             <h1 class="bg-elevated px-4 py-2 rounded-md text-3xl leading-none">{track.title}</h1>
         </div>
