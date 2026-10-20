@@ -12,7 +12,12 @@ export interface TrackArtist{
 export interface TrackAudioFile{
     originalFileName: string,
     uploadedDate: Date,
-    duration: number
+    duration: number,
+    codec: string,
+    bitrate: number | null,
+    sampleRate: number,
+    channels: number,
+    size: number
 }
 
 export interface TrackDetailed extends TrackSimple{

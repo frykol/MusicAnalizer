@@ -1,7 +1,8 @@
 <script lang="ts">
-	import type { TrackDetailed } from "#lib/api/tracks.ts";
+	import type { TrackAudioFile, TrackDetailed } from "#lib/api/tracks.ts";
     import type {PageProps} from "./$types"
     import Button from "#lib/ui/Button.svelte";
+	import ListItem from "./ListItem.svelte";
 
     let {data}: PageProps = $props();
     let track: TrackDetailed = $derived(data.track);
@@ -13,7 +14,10 @@
             return "Unknown";
         }
     });
-    
+
+    let audioFileMetadata: TrackAudioFile | null = $derived(track.audioFile);
+
+
 </script>
 <div class="flex flex-col h-dvh">
     <div id="top" class="flex flex-row border-b-2 border-b-text-damped pb-2 items-center">
@@ -32,8 +36,25 @@
         <div id="main" class="min-w-0 flex-1 p-2">
             asd
         </div>
-        <div id="right" class="bg-red-500">
-            a
+        <div id="right" class="border-l-2 border-l-text-damped p-2 pr-0 w-96">
+            <h1 class="text-2xl font-bold text-center">Statistics:</h1>
+            {#if audioFileMetadata !== null}
+            <ul class="mt-4 text-lg gap-2 flex flex-col">
+                <!-- <li class="px-3 py-1 border-2 bg-elevated border-elevated rounded-md">
+                    <div>Original file name:</div>
+                    <div class="text-right">{audioFileMetadata.originalFileName}</div>
+                </li> -->
+                <!-- {#each Object.entries(audioFileMetadata) as [key, value]}
+                    <ListItem value={value} valuePosition="text-right">{key}</ListItem>
+                {/each} -->
+                <ListItem value={audioFileMetadata.originalFileName} valuePosition="text-right">Original filename:</ListItem>
+            </ul>
+            {:else}
+                <div class="mt-10 text-center bg-alert py-10 rounded-xl flex flex-col items-center gap-4">
+                    <h1 class="text-lg px-2">File not uploaded, can't extract information</h1>
+                    <Button name="Upload now!" href="/"></Button>
+                </div>
+            {/if}
         </div>
     </div>
 </div>

@@ -4,9 +4,12 @@ import type { PageServerLoad } from "./$types";
 
 
 export const load: PageServerLoad = async({params}) => {
-    const response: apiResponse<TrackArtist[]> = await getTracks<TrackArtist[]>(`http://localhost:8080/api/artists`);
+    const response: apiResponse<TrackArtist[]> = await getTracks<TrackArtist[]>(`http://localhost:5062/api/artist`);
+    console.log(response.data);
     if (!response.data) {
         error(404, "Artists not found");
     }
+
+
     return { artists: response.data || [] };
 }
