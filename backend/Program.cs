@@ -1,9 +1,12 @@
+using System.Text;
 using backend.Context;
 using backend.Dtos;
 using backend.Repositories;
 using backend.Services;
 using backend.Services.Results;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +24,32 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod());
 });
 
+string secretKey = builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("Jwt key not configured");
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                  options.TokenValidationParameters = new()
+                  {
+                    ValidateIssuer = true,
+                    ValidIssuer = "MusicAnalizer",
+
+                    ValidateAudience = true,
+                    ValidAudience = "MusicAnalizerClient",
+
+                    ValidateLifetime = true,
+
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                      Encoding.UTF8.GetBytes(secretKey)
+                    ),
+
+                    ClockSkew = TimeSpan.Zero
+                  };
+                });
+
+  builder.Services.AddAuthorization();
+
 builder.Services.AddScoped<ITrackRepository, TrackRepository>();
 builder.Services.AddScoped<ITrackService, TrackService>();
 
@@ -30,7 +59,13 @@ builder.Services.AddScoped<IArtistService, ArtistService>();
 builder.Services.AddScoped<IAudioFileRepository, AudioFileRepository>();
 builder.Services.AddScoped<IAudioFileService, AudioFileService>();
 
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
+
 var app = builder.Build();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 app.UseCors("Frontend");

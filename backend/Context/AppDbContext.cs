@@ -14,6 +14,8 @@ public class AppDbContext : DbContext
 
     public DbSet<AudioFile> AudioFiles => Set<AudioFile>();
 
+    public DbSet<User> Users => Set<User>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

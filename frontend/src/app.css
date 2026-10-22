@@ -6,7 +6,10 @@
     --color-elevated: hsl(240 20% 40%);
     --color-text-primary: hsl(240 0% 95%);
     --color-text-damped: hsl(240 0% 70%);
-    --color-alert: hsla(0 75% 50% / 0.5);
+    --color-alert: hsla(46 100% 61.1% / 0.7); 
+    --color-danger: hsla(0 75% 50% / 0.5);
+    --color-info: hsla(189 100% 61.1% / 0.75);
+    --color-success: hsla(116 100% 61.1% / 0.75);
 }
 
 html{

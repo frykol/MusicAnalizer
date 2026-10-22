@@ -1,0 +1,1 @@
+export type UiColors = "default" | "danger" | "info" | "alert" | "success"

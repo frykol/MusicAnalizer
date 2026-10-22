@@ -21,7 +21,7 @@
 </script>
 <div class="flex flex-col h-dvh">
     <div id="top" class="flex flex-row border-b-2 border-b-text-damped pb-2 items-center">
-        <Button name="Back" href="/tracks" />
+        <Button name="Back" href="/tracks" color="default" />
         <div class="flex flex-1 justify-center">
             <h1 class="bg-elevated px-4 py-2 rounded-md text-3xl leading-none">{track.title}</h1>
         </div>
@@ -48,11 +48,22 @@
                     <ListItem value={value} valuePosition="text-right">{key}</ListItem>
                 {/each} -->
                 <ListItem value={audioFileMetadata.originalFileName} valuePosition="text-right">Original filename:</ListItem>
+                <ListItem value={audioFileMetadata.duration.toString()} valuePosition="text-right">Duration:</ListItem>
+                <ListItem value={audioFileMetadata.codec} valuePosition="text-right">Codec:</ListItem>
+                <ListItem value={audioFileMetadata.bitrate?.toString()} valuePosition="text-right">Bitrate:</ListItem>
+                <ListItem value={audioFileMetadata.sampleRate.toString()} valuePosition="text-right">Sample Rate:</ListItem>
+                <ListItem value={audioFileMetadata.channels.toString()} valuePosition="text-right">Channels:</ListItem>
+                <ListItem value={audioFileMetadata.size.toString()} valuePosition="text-right">Size:</ListItem>
+
+
+
+
+
             </ul>
             {:else}
-                <div class="mt-10 text-center bg-alert py-10 rounded-xl flex flex-col items-center gap-4">
+                <div class="mt-10 text-center bg-danger py-10 rounded-xl flex flex-col items-center gap-4">
                     <h1 class="text-lg px-2">File not uploaded, can't extract information</h1>
-                    <Button name="Upload now!" href="/"></Button>
+                    <Button name="Upload now!" href="/" color="alert"></Button>
                 </div>
             {/if}
         </div>
