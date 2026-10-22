@@ -16,10 +16,14 @@ public class AppDbContext : DbContext
 
     public DbSet<User> Users => Set<User>();
 
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<AudioFile>().HasIndex(a => a.Hash).IsUnique();
+
+        modelBuilder.Entity<RefreshToken>().HasIndex(rf => rf.TokenHash).IsUnique();
     }
 }

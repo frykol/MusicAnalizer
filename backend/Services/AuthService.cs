@@ -9,15 +9,17 @@ namespace backend.Services;
 
 public class AuthService : IAuthService
 {
-    private readonly IUserRepository _repository;
+    private readonly IAuthRepository _repository;
+    private readonly IUserRepository _userRepository;
 
-    public AuthService(IUserRepository repository)
+    public AuthService(IAuthRepository repository, IUserRepository userRepository)
     {
         _repository = repository;
+        _userRepository = userRepository;
     }
     public async Task<UserServiceResponse<User>> CreateUserAsync(UserCreateDto userCreate)
     {
-        bool userExists = await _repository.DoesUserExistsAsync(userCreate.Username);
+        bool userExists = await _userRepository.DoesUserExistsAsync(userCreate.Username);
         if (userExists)
             return new UserServiceResponse<User>{Status = UserServiceStatusResponse.UserAlreadyExists, Value = null};
 
@@ -29,7 +31,7 @@ public class AuthService : IAuthService
           PasswordHash = hashedPassword,
         };
 
-        await _repository.CreateUserAsync(user);
+        await _userRepository.CreateUserAsync(user);
         
         return new UserServiceResponse<User>{Status = UserServiceStatusResponse.Ok, Value = user};
     }
@@ -39,12 +41,12 @@ public class AuthService : IAuthService
         if (id is null)
             return null;
 
-        return await _repository.GetUserByIdAsync(id ?? default);
+        return await _userRepository.GetUserByIdAsync(id ?? default);
     }
 
     public async Task<UserServiceResponse<User>> LoginAsync(UserLoginDto userLogin)
     {
-        var user = await _repository.GetUserByNameAsync(userLogin.Username);
+        var user = await _userRepository.GetUserByNameAsync(userLogin.Username);
 
         if (user is null)
             return new UserServiceResponse<User>{Status = UserServiceStatusResponse.UserNotFound, Value = null};

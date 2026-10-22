@@ -33,7 +33,7 @@ public class UserRepository : IUserRepository
 
     public async Task<User?> GetUserByIdAsync(int id)
     {
-        return await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+        return await _context.Users.Include(u => u.Artists).Include(u => u.Tracks).Include(u => u.AudioFiles).FirstOrDefaultAsync(u => u.Id == id);
     }
 
     public async Task<User?> GetUserByNameAsync(string username)

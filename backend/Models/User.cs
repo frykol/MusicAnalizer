@@ -16,4 +16,6 @@ public class User
     public List<Track> Tracks {get; set;} = [];
 
     public List<AudioFile> AudioFiles {get; set;} = [];
+
+    public List<RefreshToken> RefreshTokens { get; set; } = [];
 }
