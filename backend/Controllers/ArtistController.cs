@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using backend.Dtos.Artist;
 using backend.Services.Results;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using backend.Extensions;
 
 namespace backend.Controllers
 {
@@ -12,10 +15,26 @@ namespace backend.Controllers
     public class ArtistController : ControllerBase
     {
         private readonly IArtistService _service;
+        private readonly IAuthService _authService;
 
-        public ArtistController(IArtistService service)
+        public ArtistController(IArtistService service, IAuthService authService)
         {
             _service = service;
+            _authService = authService;
+        }
+
+        private int? getUserId()
+        {
+            int? userId = null;
+            if(User.Identity?.IsAuthenticated == true)
+            {
+                var claim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                if(int.TryParse(claim, out int parsedId))
+                    userId = parsedId;
+            }
+
+            return userId;
         }
 
         [HttpGet]
@@ -41,17 +60,28 @@ namespace backend.Controllers
                 return NotFound();
             return Ok(artist);    
         }
+
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<ArtistResponseDto>> Create(ArtistCreateDto createDto)
         {
-            var artist = await _service.CreateAsync(createDto);
+            int? userId = User.GetUserId();
+
+            var user = await _authService.GetByIdAsync(userId);
+
+            if (user is null)
+                return NotFound("User not found");
+
+            var artist = await _service.CreateAsync(createDto, user);
             return CreatedAtAction(nameof(GetById), new {id = artist.Id}, artist);   
         }
 
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {
-            DeleteArtistResult result = await _service.DeleteAsync(id);
+            int? userId = User.GetUserId();
+
+            DeleteArtistResult result = await _service.DeleteAsync(id, userId ?? default);
             return result switch
             {
                 DeleteArtistResult.Success => NoContent(),
@@ -59,6 +89,8 @@ namespace backend.Controllers
                 DeleteArtistResult.NotFound => NotFound("Artist not found"),
 
                 DeleteArtistResult.HasTracks => Conflict("Artist has assigned tracks"),
+
+                DeleteArtistResult.InvalidPermission => Unauthorized("You don't have permission to delete this artist"),
 
                 _ => StatusCode(500)
             };

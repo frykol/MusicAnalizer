@@ -27,7 +27,7 @@ public class AudioFileService : IAudioFileService
 
         Directory.CreateDirectory(_storagePath);
     }
-    public async Task<AudioFileServiceResult> SaveAsync(int trackId, IFormFile file){
+    public async Task<AudioFileServiceResult> SaveAsync(int trackId, IFormFile file, User user){
 
         var track = await _trackRepository.GetByIdAsync(trackId);
 
@@ -102,7 +102,10 @@ public class AudioFileService : IAudioFileService
             Hash = hash,
 
             Track = track,
-            TrackId = trackId
+            TrackId = trackId,
+
+            User = user,
+            UserId = user.Id
         };
 
         await _repository.CreateAsync(audioFile);

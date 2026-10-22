@@ -17,12 +17,12 @@ public class TrackRepository : ITrackRepository
 
     public async Task<List<Track>> GetAllAsync()
     {
-        return await _context.Tracks.AsNoTracking().Include(t => t.Artist).ToListAsync();
+        return await _context.Tracks.AsNoTracking().Include(t => t.Artist).Include(t => t.User).ToListAsync();
     }
 
     public async Task<Track?> GetByIdAsync(int id)
     {
-        return await _context.Tracks.Include(t => t.Artist).Include(t => t.AudioFile).FirstOrDefaultAsync(track => track.Id == id);
+        return await _context.Tracks.Include(t => t.Artist).Include(t => t.AudioFile).Include(t => t.User).FirstOrDefaultAsync(track => track.Id == id);
     }
 
     public async Task<Track> CreateAsync(Track createdTrack)
@@ -37,16 +37,9 @@ public class TrackRepository : ITrackRepository
         return await _context.SaveChangesAsync();
     }
 
-    public async Task<bool> DeleteAsync(int id)
+    public async Task DeleteAsync(Track track)
     {
-        var track = await _context.Tracks.FindAsync(id);
-
-        if (track is null)
-            return false;
-
         _context.Tracks.Remove(track);
         await _context.SaveChangesAsync();
-
-        return true;
     }
 }

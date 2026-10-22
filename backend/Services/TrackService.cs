@@ -36,23 +36,26 @@ public class TrackService : ITrackService
         return TrackMapper.toDetailedResponseDto(track);
     }
 
-    public async Task<TrackResponseDto?> CreateAsync(TrackCreateDto trackCreate)
+    public async Task<TrackResponseDto?> CreateAsync(TrackCreateDto trackCreate, User user)
     {
         var artist = await _artistRepository.GetByIdAsync(trackCreate.ArtistId);
         if (artist is null)
             return null;
 
-        Track t = new Track{Title = trackCreate.Title, Genre = trackCreate.Genre, ArtistId = trackCreate.ArtistId, Artist = artist};
+        Track t = new Track{Title = trackCreate.Title, Genre = trackCreate.Genre, ArtistId = trackCreate.ArtistId, Artist = artist, UserId = user.Id, User = user};
 
         Track created = await _repository.CreateAsync(t);
 
         return TrackMapper.toResponseDto(created);
     }
 
-    public async Task<TrackResponseDto?> UpdateAsync(int id, TrackUpdateDto trackUpdate)
+    public async Task<TrackResponseDto?> UpdateAsync(int id, TrackUpdateDto trackUpdate, int userId)
     {
         var toUpdate = await _repository.GetByIdAsync(id);
         if (toUpdate is null)
+            return null;
+
+        if (toUpdate.UserId != userId)
             return null;
 
         toUpdate.Title = trackUpdate.Title;
@@ -63,8 +66,14 @@ public class TrackService : ITrackService
         return TrackMapper.toResponseDto(toUpdate);
     }
 
-    public async Task<bool> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(int id, int userId)
     {
-        return await _repository.DeleteAsync(id);
+        var track = await _repository.GetByIdAsync(id);
+        if (track is null)
+            return false;
+        if (track.UserId != userId)
+            return false;
+        await _repository.DeleteAsync(track);
+        return true;
     }
 }

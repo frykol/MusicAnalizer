@@ -4,5 +4,6 @@ public enum DeleteArtistResult
 {
     Success,
     NotFound,
-    HasTracks
+    HasTracks,
+    InvalidPermission
 }

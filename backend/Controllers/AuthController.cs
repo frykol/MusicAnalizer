@@ -16,9 +16,9 @@ namespace backend.Controllers
     public class AuthController : ControllerBase
     {
         private readonly string _secretKey;
-        private readonly IUserService _service;
+        private readonly IAuthService _service;
 
-        public AuthController(IConfiguration configuration,IUserService service)
+        public AuthController(IConfiguration configuration,IAuthService service)
         {
             _service = service;
             _secretKey = configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT key missing");

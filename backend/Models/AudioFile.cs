@@ -30,4 +30,7 @@ public class AudioFile
     public int TrackId { get; set; }
     public Track Track { get; set;} = null!;
 
+    public int UserId {get; set;}
+    public User User {get; set;} = null!;
+
 }

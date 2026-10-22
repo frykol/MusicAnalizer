@@ -10,5 +10,5 @@ public interface ITrackRepository
     Task<Track?> GetByIdAsync(int id);
     Task<Track> CreateAsync(Track createdTrack);
     Task<int> SaveChangesAsync();
-    Task<bool> DeleteAsync(int id);
+    Task DeleteAsync(Track track);
 }

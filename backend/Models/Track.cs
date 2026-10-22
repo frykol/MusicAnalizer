@@ -12,4 +12,7 @@ public class Track
 
     public Artist Artist { get; set; } = null!;
     public AudioFile? AudioFile {get; set;}
+
+    public int UserId {get; set;}
+    public User User {get; set;} = null!;
 }

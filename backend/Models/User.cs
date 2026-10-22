@@ -12,4 +12,8 @@ public class User
     public DateTime CreatedAt {get; set;} = DateTime.UtcNow;
     public DateTime UpdatedAt {get; set;} = DateTime.UtcNow;
     
+    public List<Artist> Artists {get; set;} = [];
+    public List<Track> Tracks {get; set;} = [];
+
+    public List<AudioFile> AudioFiles {get; set;} = [];
 }

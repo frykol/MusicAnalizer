@@ -34,7 +34,12 @@ namespace backend.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Artists");
                 });
@@ -88,6 +93,9 @@ namespace backend.Migrations
                     b.Property<DateTime>("UploadedDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Hash")
@@ -95,6 +103,8 @@ namespace backend.Migrations
 
                     b.HasIndex("TrackId")
                         .IsUnique();
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("AudioFiles");
                 });
@@ -118,9 +128,14 @@ namespace backend.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ArtistId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Tracks");
                 });
@@ -156,6 +171,17 @@ namespace backend.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("backend.Models.Artist", b =>
+                {
+                    b.HasOne("backend.Models.User", "User")
+                        .WithMany("Artists")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("backend.Models.AudioFile", b =>
                 {
                     b.HasOne("backend.Models.Track", "Track")
@@ -163,6 +189,10 @@ namespace backend.Migrations
                         .HasForeignKey("backend.Models.AudioFile", "TrackId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("backend.Models.User", null)
+                        .WithMany("AudioFiles")
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Track");
                 });
@@ -175,7 +205,15 @@ namespace backend.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("backend.Models.User", "User")
+                        .WithMany("Tracks")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Artist");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("backend.Models.Artist", b =>
@@ -186,6 +224,15 @@ namespace backend.Migrations
             modelBuilder.Entity("backend.Models.Track", b =>
                 {
                     b.Navigation("AudioFile");
+                });
+
+            modelBuilder.Entity("backend.Models.User", b =>
+                {
+                    b.Navigation("Artists");
+
+                    b.Navigation("AudioFiles");
+
+                    b.Navigation("Tracks");
                 });
 #pragma warning restore 612, 618
         }

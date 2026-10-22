@@ -1,11 +1,13 @@
 namespace backend.Dtos.Track;
 using backend.Dtos.Artist;
 using backend.Dtos.AudioFile;
+using backend.Dtos.User;
 
 public record class TrackDetailedResponseDto(
     int id,
     string Title,
     string Genre,
     ArtistResponseDto artist,
-    AudioFileResponseDto? AudioFile
+    AudioFileResponseDto? AudioFile,
+    UserResponseDto User
 );

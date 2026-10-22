@@ -1,9 +1,11 @@
 using System.Diagnostics;
 using backend.Dtos;
 using backend.Dtos.Track;
+using backend.Extensions;
 using backend.Models;
 using backend.Services;
 using backend.Services.Results;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -16,11 +18,13 @@ namespace backend.Controllers
     {
         private readonly ITrackService _service;
         private readonly IAudioFileService _audioFileService;
+        private readonly IAuthService _authService;
 
-        public TrackController(ITrackService service, IAudioFileService audioFileService)
+        public TrackController(ITrackService service, IAudioFileService audioFileService, IAuthService authService)
         {
             _service = service;
             _audioFileService = audioFileService;
+            _authService = authService;
         }
 
         [HttpGet]
@@ -41,37 +45,58 @@ namespace backend.Controllers
             return Ok(track);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<TrackResponseDto>> CreateTrack([FromBody] TrackCreateDto createDto)
         {
-            var track = await _service.CreateAsync(createDto);
+            int? userId = User.GetUserId();
+
+            var user = await _authService.GetByIdAsync(userId);
+
+            if (user is null)
+                return Unauthorized();
+
+            var track = await _service.CreateAsync(createDto, user);
             if (track is null)
                 return NotFound("Artist not found");
             return CreatedAtAction(nameof(GetTrackById), new {id = track.id}, track);
         }
 
+        [Authorize]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<TrackResponseDto>> UpdateTrack(int id, [FromBody] TrackUpdateDto updateDto)
         {
-            var track = await _service.UpdateAsync(id, updateDto);
+            int? userId = User.GetUserId();
+            var track = await _service.UpdateAsync(id, updateDto, userId ?? default);
             if (track is null)
                 return NotFound();
             return Ok(track);
         }
 
+        [Authorize]
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteTrack(int id)
         {
-            var isDeleted = await _service.DeleteAsync(id);
+            
+            int? userId = User.GetUserId();
+            var isDeleted = await _service.DeleteAsync(id, userId ?? default);
             if(!isDeleted)
                 return NotFound();
             return NoContent();
         }
 
+        [Authorize]
         [HttpPost("{id:int}/file")]
         public async Task<IActionResult> UploadFile(int id, [FromForm] IFormFile file)
-        {            
-            var audioFileServiceResult = await _audioFileService.SaveAsync(id, file);
+        {         
+            int? userId = User.GetUserId();
+
+            var user = await _authService.GetByIdAsync(userId);
+
+            if (user is null)
+                return Unauthorized();
+
+            var audioFileServiceResult = await _audioFileService.SaveAsync(id, file, user);
             return audioFileServiceResult switch
             {
                 AudioFileServiceResult.IsSucces => Ok("File uploaded successfully"),

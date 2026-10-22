@@ -23,9 +23,9 @@ public class ArtistService : IArtistService
         return artists.Select(ArtistMapper.toDetailedResponseDto).ToList();
     }
 
-    public async Task<ArtistResponseDto> CreateAsync(ArtistCreateDto artistCreate)
+    public async Task<ArtistResponseDto> CreateAsync(ArtistCreateDto artistCreate, User user)
     {
-        Artist artist = new Artist{Name = artistCreate.Name}; 
+        Artist artist = new Artist{Name = artistCreate.Name, UserId = user.Id, User = user}; 
         var created = await _repository.CreateAsync(artist);
         return ArtistMapper.toResponseDto(created);
     }
@@ -49,7 +49,7 @@ public class ArtistService : IArtistService
 
         return ArtistMapper.toDetailedResponseDto(artist);
     }
-    public async Task<DeleteArtistResult> DeleteAsync(int id)
+    public async Task<DeleteArtistResult> DeleteAsync(int id, int userId)
     {
         var artist = await _repository.GetByIdAsync(id);
         if (artist is null)
@@ -57,6 +57,9 @@ public class ArtistService : IArtistService
 
         if (artist.Tracks.Count > 0)
             return DeleteArtistResult.HasTracks;
+
+        if (artist.UserId != userId)
+            return DeleteArtistResult.InvalidPermission;
         
         await _repository.DeleteAsync(artist);
         return DeleteArtistResult.Success;
