@@ -19,8 +19,18 @@ public class AuthRepository : IAuthRepository
         await _context.SaveChangesAsync();
         return token;
     }
-    public async Task<RefreshToken?> GetRefreshTokenByHash(string hash)
+    public async Task<RefreshToken?> GetRefreshTokenByHashAsync(string hash)
     {
-        return await _context.RefreshTokens.FirstOrDefaultAsync(t => t.TokenHash == hash);
+        return await _context.RefreshTokens.Include(t => t.User).FirstOrDefaultAsync(t => t.TokenHash == hash);
+    }
+
+    public async Task<int> SaveChangesAsync()
+    {
+        return await _context.SaveChangesAsync();
+    }
+
+    public async Task<List<RefreshToken>> GetRefreshTokensAsync(int userId)
+    {
+        return await _context.RefreshTokens.Where(t => t.UserId == userId && t.RevokedAt == null).ToListAsync();
     }
 }

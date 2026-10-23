@@ -6,5 +6,9 @@ namespace backend.Repositories;
 public interface IAuthRepository
 {
     Task<RefreshToken> CreateRefeshTokenAsync(RefreshToken token);
-    Task<RefreshToken?> GetRefreshTokenByHash(string hash);
+    Task<RefreshToken?> GetRefreshTokenByHashAsync(string hash);
+
+    Task<int> SaveChangesAsync();
+
+    Task<List<RefreshToken>> GetRefreshTokensAsync(int userId);
 }

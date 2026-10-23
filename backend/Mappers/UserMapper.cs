@@ -18,4 +18,10 @@ public static class UserMapper
         var audioFilesDto = user.AudioFiles.Select(AudioFileMapper.toResponseDto).ToList();
         return new UserDetailedResponseDto(user.Username, artistsDto, tracksDto, audioFilesDto);
     }
+
+    public static UserLoginResponseDto toUserLoginResponseDto(User user, string accessToken, string refreshToken)
+    {
+        var userResponseDto = toResponseDto(user);
+        return new UserLoginResponseDto(userResponseDto, accessToken, refreshToken);
+    }
 }

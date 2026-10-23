@@ -1,7 +1,10 @@
 using System.Security.Claims;
 using backend.Core.Auth;
+using backend.Dtos.RefreshToken;
 using backend.Dtos.User;
+using backend.Extensions;
 using backend.Infrastructure.Auth;
+using backend.Mappers;
 using backend.Models;
 using backend.Services;
 using backend.Services.Results;
@@ -15,17 +18,15 @@ namespace backend.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly string _secretKey;
         private readonly IAuthService _service;
 
-        public AuthController(IConfiguration configuration,IAuthService service)
+        public AuthController(IAuthService service)
         {
             _service = service;
-            _secretKey = configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT key missing");
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<string>> register([FromBody] UserCreateDto userCreate)
+        public async Task<ActionResult<UserLoginResponseDto>> register([FromBody] UserCreateDto userCreate)
         {
             var response = await _service.CreateUserAsync(userCreate);
 
@@ -35,13 +36,12 @@ namespace backend.Controllers
             if(response.Value is null)
                 return BadRequest("ERROR USER");
 
-            var token = JwtTokenGenerator.GenerateToken(_secretKey, response.Value.Id);
 
-            return Ok(token);
+            return Ok(response.Value);
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<string>> login([FromBody] UserLoginDto userLogin)
+        public async Task<ActionResult<UserLoginResponseDto>> login([FromBody] UserLoginDto userLogin)
         {
             var response = await _service.LoginAsync(userLogin);
 
@@ -52,32 +52,43 @@ namespace backend.Controllers
             if(response.Value is null)
                 throw new Exception("OYOY");
 
-            var token = JwtTokenGenerator.GenerateToken(_secretKey, response.Value.Id);
-
-            return Ok(token);
+            return Ok(response.Value);
         }
 
         [Authorize]
         [HttpGet("me")]
-        public async Task<ActionResult<User>> me()
+        public async Task<ActionResult<UserDetailedResponseDto>> me()
         {   
-            int? userId = null;
-
-            if(User.Identity?.IsAuthenticated == true)
-            {
-                var claim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                if(int.TryParse(claim, out int parsedId))
-                    userId = parsedId;
-            }
+            int? userId = User.GetUserId();
 
             var user = await _service.GetByIdAsync(userId);
 
             if(user is null)
                 return NotFound("User not found");
 
+            var mapped = UserMapper.toDetailedResponseDto(user);
 
-            return Ok(user);
+            return Ok(mapped);
+        }
+
+        [HttpPost("access")]
+        public async Task<ActionResult<string>> GetAccessTokenAsync([FromBody] RefreshTokenDto refreshTokenDto)
+        {
+            var token = await _service.GetAccessTokenAsync(refreshTokenDto.token);
+            if (token is null)
+                return Unauthorized();
+            return Ok(token);    
+        }
+
+        [Authorize]
+        [HttpPost("logout")]
+        public async Task<IActionResult> LogoutAsync()
+        {
+            int? userId = User.GetUserId();
+
+            await _service.LogoutAsync(userId ?? default);
+
+            return Ok();
         }
     }
 }
