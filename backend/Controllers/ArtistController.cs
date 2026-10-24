@@ -23,20 +23,6 @@ namespace backend.Controllers
             _authService = authService;
         }
 
-        private int? getUserId()
-        {
-            int? userId = null;
-            if(User.Identity?.IsAuthenticated == true)
-            {
-                var claim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                if(int.TryParse(claim, out int parsedId))
-                    userId = parsedId;
-            }
-
-            return userId;
-        }
-
         [HttpGet]
         public async Task<ActionResult<List<ArtistResponseDto>>> GetAll()
         {
@@ -52,13 +38,21 @@ namespace backend.Controllers
                 return NotFound();
             return Ok(artist);
         }
+
+        [Authorize]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<ArtistDetailedResponseDto>> Update(int id, ArtistUpdateDto updateDto)
         {
-            var artist = await _service.UpdateAsync(id, updateDto);
-            if (artist is null)
+            int? userId = User.GetUserId();
+
+            var artist = await _service.UpdateAsync(id, updateDto, userId ?? default);
+            if (artist.Status == ArtistServiceStatus.ArtistNotFound)
                 return NotFound();
-            return Ok(artist);    
+
+            if (artist.Status == ArtistServiceStatus.InvalidCredentials)
+                return Unauthorized();
+
+            return Ok(artist.Value);    
         }
 
         [Authorize]
@@ -76,6 +70,7 @@ namespace backend.Controllers
             return CreatedAtAction(nameof(GetById), new {id = artist.Id}, artist);   
         }
 
+        [Authorize]
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {

@@ -8,10 +8,10 @@ namespace backend.Services;
 public interface IAuthService
 {
     //TODO: Make valid user response dto
-    Task<UserServiceResponse<UserLoginResponseDto>> CreateUserAsync(UserCreateDto userCreate);
+    Task<ServiceResponse<AuthServiceStatus, UserLoginResponseDto>> CreateUserAsync(UserCreateDto userCreate);
     Task<User?> GetByIdAsync(int? id);
 
-    Task<UserServiceResponse<UserLoginResponseDto>> LoginAsync(UserLoginDto userLogin);
+    Task<ServiceResponse<AuthServiceStatus, UserLoginResponseDto>> LoginAsync(UserLoginDto userLogin);
 
     Task<string?> GetAccessTokenAsync(string refreshToken);
 

@@ -10,6 +10,6 @@ public interface IArtistService
     Task<List<ArtistResponseDto>> GetAllAsync();
     Task<ArtistDetailedResponseDto?> GetByIdAsync(int id);
     Task<ArtistResponseDto> CreateAsync(ArtistCreateDto artistCreate, User user);
-    Task<ArtistDetailedResponseDto?> UpdateAsync(int id, ArtistUpdateDto artistUpdate);
+    Task<ServiceResponse<ArtistServiceStatus, ArtistDetailedResponseDto>> UpdateAsync(int id, ArtistUpdateDto artistUpdate, int userId);
     Task<DeleteArtistResult> DeleteAsync(int id, int userId);
 }

@@ -30,7 +30,7 @@ namespace backend.Controllers
         {
             var response = await _service.CreateUserAsync(userCreate);
 
-            if(response.Status != UserServiceStatusResponse.Ok)
+            if(response.Status != AuthServiceStatus.Ok)
                 return BadRequest("HOLAA");
 
             if(response.Value is null)
@@ -46,7 +46,7 @@ namespace backend.Controllers
             var response = await _service.LoginAsync(userLogin);
 
             //TODO: Change this, quick test only
-            if (response.Status != UserServiceStatusResponse.Ok)
+            if (response.Status != AuthServiceStatus.Ok)
                 return BadRequest("something wrong");
                 
             if(response.Value is null)

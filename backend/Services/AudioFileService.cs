@@ -27,14 +27,14 @@ public class AudioFileService : IAudioFileService
 
         Directory.CreateDirectory(_storagePath);
     }
-    public async Task<AudioFileServiceResult> SaveAsync(int trackId, IFormFile file, User user){
+    public async Task<AudioFileServiceStatus> SaveAsync(int trackId, IFormFile file, User user){
 
         var track = await _trackRepository.GetByIdAsync(trackId);
 
         if (track is null)
-            return AudioFileServiceResult.TrackNotFound;
+            return AudioFileServiceStatus.TrackNotFound;
         if (file is null || file.Length == 0)
-            return AudioFileServiceResult.IsNotMusicFile;
+            return AudioFileServiceStatus.IsNotMusicFile;
 
         var fileName = FileNameGenerator.GenerateName(file.FileName);
 
@@ -50,7 +50,7 @@ public class AudioFileService : IAudioFileService
         if (await _repository.ExistsByHashAsync(hash))
         {
             LocalFileManager.DeleteFile(fullPath);
-            return AudioFileServiceResult.FileAlreadyExists;
+            return AudioFileServiceStatus.FileAlreadyExists;
         }
 
 
@@ -59,7 +59,7 @@ public class AudioFileService : IAudioFileService
         if (!audioFileValidatorResult.IsSucces)
         {
             LocalFileManager.DeleteFile(fullPath);
-            return AudioFileServiceResult.IsNotMusicFile;
+            return AudioFileServiceStatus.IsNotMusicFile;
         }
 
     
@@ -68,7 +68,7 @@ public class AudioFileService : IAudioFileService
         if (!metadata.IsSucces)
         {
             LocalFileManager.DeleteFile(fullPath);
-            return AudioFileServiceResult.IsNotMusicFile;
+            return AudioFileServiceStatus.IsNotMusicFile;
         }
 
         AudioMetadata? audioMetadata;
@@ -80,13 +80,13 @@ public class AudioFileService : IAudioFileService
         catch
         {
             LocalFileManager.DeleteFile(fullPath);
-            return AudioFileServiceResult.InvalidMetadata;
+            return AudioFileServiceStatus.InvalidMetadata;
         }
 
         if(audioMetadata is null)
         {
             LocalFileManager.DeleteFile(fullPath);
-            return AudioFileServiceResult.InvalidMetadata;
+            return AudioFileServiceStatus.InvalidMetadata;
         }
 
         var audioFile = new AudioFile
@@ -114,7 +114,7 @@ public class AudioFileService : IAudioFileService
         //LocalFileManager.DeleteFile(fullPath);
 
 
-        return AudioFileServiceResult.IsSucces;
+        return AudioFileServiceStatus.IsSucces;
     }
 
     public async Task<List<AudioFileResponseDto>> GetAllAsync()
@@ -130,15 +130,18 @@ public class AudioFileService : IAudioFileService
 
         return AudioFileMapper.toResponseDto(audioFile);
     }
-    public async Task<bool> DeleteByIdAsync(int id)
+    public async Task<AudioFileServiceStatus> DeleteByIdAsync(int id, int userId)
     {
         var audioFile = await _repository.GetByIdAsync(id);
         if (audioFile is null)
-            return false;
+            return AudioFileServiceStatus.NotFound;
+        
+        if (audioFile.UserId != userId)
+            return AudioFileServiceStatus.InvalidCredentials;
         
         string filePath = audioFile.StorageKey;
         await _repository.DeleteAsync(audioFile);
         LocalFileManager.DeleteFile(filePath);
-        return true;
+        return AudioFileServiceStatus.IsSucces;
     }
 }

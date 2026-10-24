@@ -1,7 +1,7 @@
 using System;
 
 namespace backend.Services.Results;
-public enum AudioFileServiceResult
+public enum AudioFileServiceStatus
 {
     IsSucces,
     IsNotMusicFile,
@@ -9,5 +9,8 @@ public enum AudioFileServiceResult
     FileAlreadyExists,
     TrackNotFound,
     IsTooLong,
-    IsTooShort
+    IsTooShort,
+
+    NotFound,
+    InvalidCredentials
 }

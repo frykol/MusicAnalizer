@@ -1,5 +1,7 @@
 using backend.Dtos.AudioFile;
+using backend.Extensions;
 using backend.Services.Results;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -32,12 +34,17 @@ namespace backend.Controllers
             return Ok(audioFile);
         }
 
+        [Authorize]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<AudioFileResponseDto>> DeleteById(int id)
-        {
-            var isDeleted = await _service.DeleteByIdAsync(id);
-            if (!isDeleted)
-                return NotFound("Audio file not found");
+        {   
+            int? userId = User.GetUserId();
+
+            var status = await _service.DeleteByIdAsync(id, userId ?? default);
+            if (status == AudioFileServiceStatus.NotFound)
+                return NotFound();
+            if (status == AudioFileServiceStatus.InvalidCredentials)
+                return Unauthorized();
             return NoContent();
         }
     }

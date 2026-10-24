@@ -37,17 +37,20 @@ public class ArtistService : IArtistService
 
         return ArtistMapper.toDetailedResponseDto(artist);
     }
-    public async Task<ArtistDetailedResponseDto?> UpdateAsync(int id, ArtistUpdateDto artistUpdate)
+    public async Task<ServiceResponse<ArtistServiceStatus, ArtistDetailedResponseDto>> UpdateAsync(int id, ArtistUpdateDto artistUpdate, int userId)
     {
         var artist = await _repository.GetByIdAsync(id);
         if (artist is null)
-            return null;
+            return new(){Status = ArtistServiceStatus.ArtistNotFound, Value = null};
+
+        if (artist.UserId != userId)
+            return new(){Status = ArtistServiceStatus.InvalidCredentials, Value = null};
         
         artist.Name = artistUpdate.Name;
 
         await _repository.SaveChangesAsync();
 
-        return ArtistMapper.toDetailedResponseDto(artist);
+        return new(){Status = ArtistServiceStatus.Ok, Value = ArtistMapper.toDetailedResponseDto(artist)};
     }
     public async Task<DeleteArtistResult> DeleteAsync(int id, int userId)
     {

@@ -33,7 +33,7 @@ public class AudioFileRepository : IAudioFileRepository
 
     public async Task<AudioFile?> GetByIdAsync(int id)
     {
-        return await _context.AudioFiles.FirstOrDefaultAsync(a => a.Id == id);
+        return await _context.AudioFiles.Include(af => af.User).FirstOrDefaultAsync(a => a.Id == id);
     }
     public async Task DeleteAsync(AudioFile audioFile)
     {

@@ -6,6 +6,7 @@ using backend.Repositories;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Components.Web;
 using backend.Mappers;
+using backend.Services.Results;
 
 namespace backend.Services;
 
@@ -49,21 +50,21 @@ public class TrackService : ITrackService
         return TrackMapper.toResponseDto(created);
     }
 
-    public async Task<TrackResponseDto?> UpdateAsync(int id, TrackUpdateDto trackUpdate, int userId)
+    public async Task<ServiceResponse<TrackServiceStatus, TrackResponseDto>> UpdateAsync(int id, TrackUpdateDto trackUpdate, int userId)
     {
         var toUpdate = await _repository.GetByIdAsync(id);
         if (toUpdate is null)
-            return null;
+            return new(){Status = TrackServiceStatus.TrackNotFound, Value = null};
 
         if (toUpdate.UserId != userId)
-            return null;
+            return new(){Status = TrackServiceStatus.InvalidCredentials, Value = null};
 
         toUpdate.Title = trackUpdate.Title;
         toUpdate.Genre = trackUpdate.Genre;
 
         await _repository.SaveChangesAsync();
 
-        return TrackMapper.toResponseDto(toUpdate);
+        return new(){Status = TrackServiceStatus.Ok, Value = TrackMapper.toResponseDto(toUpdate)};
     }
 
     public async Task<bool> DeleteAsync(int id, int userId)

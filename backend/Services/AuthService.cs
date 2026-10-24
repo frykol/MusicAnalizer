@@ -44,11 +44,11 @@ public class AuthService : IAuthService
     }
 
 
-    public async Task<UserServiceResponse<UserLoginResponseDto>> CreateUserAsync(UserCreateDto userCreate)
+    public async Task<ServiceResponse<AuthServiceStatus, UserLoginResponseDto>> CreateUserAsync(UserCreateDto userCreate)
     {
         bool userExists = await _userRepository.DoesUserExistsAsync(userCreate.Username);
         if (userExists)
-            return new UserServiceResponse<UserLoginResponseDto>{Status = UserServiceStatusResponse.UserAlreadyExists, Value = null};
+            return new (){Status = AuthServiceStatus.UserAlreadyExists, Value = null};
 
         var hashedPassword = PasswordHasher.HashPassword(userCreate.Password);
 
@@ -64,7 +64,7 @@ public class AuthService : IAuthService
 
         var userLoginResponse = UserMapper.toUserLoginResponseDto(user, tokens.accessToknen, tokens.refreshToken);
         
-        return new UserServiceResponse<UserLoginResponseDto>{Status = UserServiceStatusResponse.Ok, Value = userLoginResponse};
+        return new (){Status = AuthServiceStatus.Ok, Value = userLoginResponse};
     }
 
     public async Task<User?> GetByIdAsync(int? id)
@@ -75,25 +75,24 @@ public class AuthService : IAuthService
         return await _userRepository.GetUserByIdAsync(id ?? default);
     }
 
-    public async Task<UserServiceResponse<UserLoginResponseDto>> LoginAsync(UserLoginDto userLogin)
+    public async Task<ServiceResponse<AuthServiceStatus, UserLoginResponseDto>> LoginAsync(UserLoginDto userLogin)
     {
         var user = await _userRepository.GetUserByNameAsync(userLogin.Username);
-        Console.WriteLine("NOT FOUNDDDDD");
 
         if (user is null)
-            return new UserServiceResponse<UserLoginResponseDto>{Status = UserServiceStatusResponse.UserNotFound, Value = null};
+            return new (){Status = AuthServiceStatus.UserNotFound, Value = null};
 
         var isPasswordCorrect = PasswordHasher.VerifyPassword(userLogin.Password, user.PasswordHash);
 
-        Console.WriteLine("PASSWORD WRONGGGG");
+
         if (!isPasswordCorrect)
-            return new UserServiceResponse<UserLoginResponseDto>{Status = UserServiceStatusResponse.InvalidCredentials, Value = null};
+            return new (){Status = AuthServiceStatus.InvalidCredentials, Value = null};
 
         var tokens = await GenerateTokens(user);
 
         var userLoginResponse = UserMapper.toUserLoginResponseDto(user, tokens.accessToknen, tokens.refreshToken);
 
-        return new UserServiceResponse<UserLoginResponseDto>{Status = UserServiceStatusResponse.Ok, Value = userLoginResponse};
+        return new (){Status = AuthServiceStatus.Ok, Value = userLoginResponse};
     }
 
     public async Task<string?> GetAccessTokenAsync(string refreshToken)

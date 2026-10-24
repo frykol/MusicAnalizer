@@ -68,9 +68,13 @@ namespace backend.Controllers
         {
             int? userId = User.GetUserId();
             var track = await _service.UpdateAsync(id, updateDto, userId ?? default);
-            if (track is null)
+            if (track.Status == TrackServiceStatus.TrackNotFound)
                 return NotFound();
-            return Ok(track);
+
+            if (track.Status == TrackServiceStatus.InvalidCredentials)
+                return Unauthorized();
+
+            return Ok(track.Value);
         }
 
         [Authorize]
@@ -99,13 +103,13 @@ namespace backend.Controllers
             var audioFileServiceResult = await _audioFileService.SaveAsync(id, file, user);
             return audioFileServiceResult switch
             {
-                AudioFileServiceResult.IsSucces => Ok("File uploaded successfully"),
-                AudioFileServiceResult.IsNotMusicFile => BadRequest("The uploaded file is not a valid music file"),
-                AudioFileServiceResult.IsTooLong => BadRequest("The uploaded file is too long"),
-                AudioFileServiceResult.IsTooShort => BadRequest("The uploaded file is too short"),
-                AudioFileServiceResult.InvalidMetadata => BadRequest("The uploaded file has invalid metadata"),
-                AudioFileServiceResult.TrackNotFound => NotFound("Track not found"),
-                AudioFileServiceResult.FileAlreadyExists => BadRequest("File uploaded already exists"),
+                AudioFileServiceStatus.IsSucces => Ok("File uploaded successfully"),
+                AudioFileServiceStatus.IsNotMusicFile => BadRequest("The uploaded file is not a valid music file"),
+                AudioFileServiceStatus.IsTooLong => BadRequest("The uploaded file is too long"),
+                AudioFileServiceStatus.IsTooShort => BadRequest("The uploaded file is too short"),
+                AudioFileServiceStatus.InvalidMetadata => BadRequest("The uploaded file has invalid metadata"),
+                AudioFileServiceStatus.TrackNotFound => NotFound("Track not found"),
+                AudioFileServiceStatus.FileAlreadyExists => BadRequest("File uploaded already exists"),
                 _ => StatusCode(500, "An unexpected error occurred")
             };
         }
