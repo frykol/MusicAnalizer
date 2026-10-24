@@ -7,7 +7,7 @@ namespace backend.Services;
 
 public interface IArtistService
 {
-    Task<List<ArtistDetailedResponseDto>> GetAllAsync();
+    Task<List<ArtistResponseDto>> GetAllAsync();
     Task<ArtistDetailedResponseDto?> GetByIdAsync(int id);
     Task<ArtistResponseDto> CreateAsync(ArtistCreateDto artistCreate, User user);
     Task<ArtistDetailedResponseDto?> UpdateAsync(int id, ArtistUpdateDto artistUpdate);

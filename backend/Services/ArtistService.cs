@@ -17,10 +17,10 @@ public class ArtistService : IArtistService
         _repository = repository;
     }
 
-    public async Task<List<ArtistDetailedResponseDto>> GetAllAsync()
+    public async Task<List<ArtistResponseDto>> GetAllAsync()
     {
         var artists = await _repository.GetAllAsync();
-        return artists.Select(ArtistMapper.toDetailedResponseDto).ToList();
+        return artists.Select(ArtistMapper.toResponseDto).ToList();
     }
 
     public async Task<ArtistResponseDto> CreateAsync(ArtistCreateDto artistCreate, User user)

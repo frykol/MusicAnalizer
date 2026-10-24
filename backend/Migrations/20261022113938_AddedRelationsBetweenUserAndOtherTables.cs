@@ -31,23 +31,23 @@ namespace backend.Migrations
                 nullable: false,
                 defaultValue: 0);
 
-                migrationBuilder.Sql("""
-                UPDATE "Artists"
-                SET "UserId" = 1
-                WHERE "UserId" = 0;
-            """);
+            //     migrationBuilder.Sql("""
+            //     UPDATE "Artists"
+            //     SET "UserId" = 1
+            //     WHERE "UserId" = 0;
+            // """);
 
-            migrationBuilder.Sql("""
-                UPDATE "AudioFiles"
-                SET "UserId" = 1
-                WHERE "UserId" = 0;
-            """);
+            // migrationBuilder.Sql("""
+            //     UPDATE "AudioFiles"
+            //     SET "UserId" = 1
+            //     WHERE "UserId" = 0;
+            // """);
 
-            migrationBuilder.Sql("""
-                UPDATE "Tracks"
-                SET "UserId" = 1
-                WHERE "UserId" = 0;
-            """);
+            // migrationBuilder.Sql("""
+            //     UPDATE "Tracks"
+            //     SET "UserId" = 1
+            //     WHERE "UserId" = 0;
+            // """);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tracks_UserId",

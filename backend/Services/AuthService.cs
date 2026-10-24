@@ -78,12 +78,14 @@ public class AuthService : IAuthService
     public async Task<UserServiceResponse<UserLoginResponseDto>> LoginAsync(UserLoginDto userLogin)
     {
         var user = await _userRepository.GetUserByNameAsync(userLogin.Username);
+        Console.WriteLine("NOT FOUNDDDDD");
 
         if (user is null)
             return new UserServiceResponse<UserLoginResponseDto>{Status = UserServiceStatusResponse.UserNotFound, Value = null};
 
         var isPasswordCorrect = PasswordHasher.VerifyPassword(userLogin.Password, user.PasswordHash);
 
+        Console.WriteLine("PASSWORD WRONGGGG");
         if (!isPasswordCorrect)
             return new UserServiceResponse<UserLoginResponseDto>{Status = UserServiceStatusResponse.InvalidCredentials, Value = null};
 

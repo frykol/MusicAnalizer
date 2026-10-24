@@ -31,18 +31,18 @@ namespace backend.Migrations
                     table.PrimaryKey("PK_Artists", x => x.Id);
                 });
 
-            migrationBuilder.Sql("""
-                WITH unknown_artist AS (
-                    INSERT INTO "Artists" ("Name")
-                    VALUES ('Unknown Artist')
-                    RETURNING "Id"
-                )
-                UPDATE "Tracks"
-                SET "ArtistId" = (
-                    SELECT "Id" FROM unknown_artist
-                )
-                WHERE "ArtistId" = 0;
-            """);
+            // migrationBuilder.Sql("""
+            //     WITH unknown_artist AS (
+            //         INSERT INTO "Artists" ("Name")
+            //         VALUES ('Unknown Artist')
+            //         RETURNING "Id"
+            //     )
+            //     UPDATE "Tracks"
+            //     SET "ArtistId" = (
+            //         SELECT "Id" FROM unknown_artist
+            //     )
+            //     WHERE "ArtistId" = 0;
+            // """);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tracks_ArtistId",

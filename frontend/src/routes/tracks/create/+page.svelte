@@ -21,15 +21,21 @@
         event.preventDefault();
         console.log(formData);
         statusCreate = null;
-        
-        let createResponse: apiResponse<TrackSimple> = await createTrack<TrackSimple>("http://localhost:5062/api/track", formData);
-        console.log(createResponse.status);
-        if(createResponse.status === 201){
-            statusCreate = true;
+        try{
+            let createResponse: apiResponse<TrackSimple> = await createTrack<TrackSimple>("http://localhost:5062/api/track", formData);
+            console.log(createResponse.status);
+            if(createResponse.status === 201){
+                statusCreate = true;
+            }
+            else{
+                statusCreate = false;
+            }
         }
-        else{
+        catch (e){
+            console.error("Error while creating track: ", e)
             statusCreate = false;
         }
+        
     }
 </script>
 

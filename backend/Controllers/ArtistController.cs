@@ -38,7 +38,7 @@ namespace backend.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<ArtistDetailedResponseDto>>> GetAll()
+        public async Task<ActionResult<List<ArtistResponseDto>>> GetAll()
         {
             var artists = await _service.GetAllAsync();
             return Ok(artists);

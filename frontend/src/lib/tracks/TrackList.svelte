@@ -9,7 +9,7 @@
 
 </script>
 
-<div class=' flex flex-row flex-1'>
+<div class='flex flex-row flex-1 flex-wrap gap-8 justify-around'>
     {#each tracks as track}
         <TrackCard track={track}/>
     {/each}
