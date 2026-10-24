@@ -59,3 +59,6 @@ nunit-*.xml
 .vscode/
 *.http
 Storage/
+
+seed-users.csv
+python_test/

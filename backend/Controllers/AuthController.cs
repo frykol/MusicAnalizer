@@ -46,11 +46,11 @@ namespace backend.Controllers
             var response = await _service.LoginAsync(userLogin);
 
             //TODO: Change this, quick test only
-            if (response.Status != AuthServiceStatus.Ok)
-                return BadRequest("something wrong");
+            if (response.Status == AuthServiceStatus.UserNotFound)
+                return NotFound();
                 
-            if(response.Value is null)
-                throw new Exception("OYOY");
+            if (response.Status == AuthServiceStatus.InvalidCredentials)
+                return Unauthorized();
 
             return Ok(response.Value);
         }

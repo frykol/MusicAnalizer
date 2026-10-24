@@ -57,12 +57,13 @@ public class ArtistService : IArtistService
         var artist = await _repository.GetByIdAsync(id);
         if (artist is null)
             return DeleteArtistResult.NotFound;
+            
+        if (artist.UserId != userId)
+            return DeleteArtistResult.InvalidPermission;
 
         if (artist.Tracks.Count > 0)
             return DeleteArtistResult.HasTracks;
 
-        if (artist.UserId != userId)
-            return DeleteArtistResult.InvalidPermission;
         
         await _repository.DeleteAsync(artist);
         return DeleteArtistResult.Success;

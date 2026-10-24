@@ -20,7 +20,7 @@ public class ArtistRepository : IArtistRepository
     }
     public async Task<Artist?> GetByIdAsync(int id)
     {
-        return await _context.Artists.Include(artist => artist.Tracks).FirstOrDefaultAsync(artist => artist.Id == id);
+        return await _context.Artists.Include(artist => artist.Tracks).ThenInclude(t => t.User).FirstOrDefaultAsync(artist => artist.Id == id);
     }
 
     public async Task<Artist> CreateAsync(Artist createdArtist){

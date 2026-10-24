@@ -5,6 +5,7 @@ using backend.Extensions;
 using backend.Models;
 using backend.Services;
 using backend.Services.Results;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -110,6 +111,7 @@ namespace backend.Controllers
                 AudioFileServiceStatus.InvalidMetadata => BadRequest("The uploaded file has invalid metadata"),
                 AudioFileServiceStatus.TrackNotFound => NotFound("Track not found"),
                 AudioFileServiceStatus.FileAlreadyExists => BadRequest("File uploaded already exists"),
+                AudioFileServiceStatus.InvalidCredentials => Forbid(),
                 _ => StatusCode(500, "An unexpected error occurred")
             };
         }

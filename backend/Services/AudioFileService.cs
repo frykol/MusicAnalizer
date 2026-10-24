@@ -33,6 +33,8 @@ public class AudioFileService : IAudioFileService
 
         if (track is null)
             return AudioFileServiceStatus.TrackNotFound;
+        if (track.Id != user.Id)
+            return AudioFileServiceStatus.InvalidCredentials;
         if (file is null || file.Length == 0)
             return AudioFileServiceStatus.IsNotMusicFile;
 
