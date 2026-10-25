@@ -73,3 +73,6 @@ app.UseAuthorization();
 app.MapControllers();
 app.UseCors("Frontend");
 app.Run();
+
+
+public partial class Program{}
