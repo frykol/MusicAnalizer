@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { TrackSimple } from "#lib/api/tracks.ts";
+	import type { TrackSimple } from "#lib/api/tracksTypes.ts";
     import TrackCard from "#lib/tracks/TrackCard.svelte";
 	import TrackList from "#lib/tracks/TrackList.svelte";
     import type { PageProps } from "./$types";

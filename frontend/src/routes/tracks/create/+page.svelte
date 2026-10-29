@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { TrackCreate, apiResponse, TrackSimple } from "#lib/api/tracks.ts";
-    import { createTrack } from "#lib/api/tracks.ts";
+	import type { TrackCreate, TrackSimple } from "#lib/api/tracksTypes.ts";
+    import { type apiResponse, apiFetch } from "#lib/api/api.ts";
     import Button from "#lib/ui/Button.svelte";
     import type { PageProps } from "./$types";
 
@@ -22,7 +22,7 @@
         console.log(formData);
         statusCreate = null;
         try{
-            let createResponse: apiResponse<TrackSimple> = await createTrack<TrackSimple>("http://localhost:5062/api/track", formData);
+            let createResponse: apiResponse<TrackSimple> = await apiFetch<TrackCreate,TrackSimple>("http://localhost:5062/api/track", formData, 'POST');
             console.log(createResponse.status);
             if(createResponse.status === 201){
                 statusCreate = true;

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { TrackAudioFile, TrackDetailed } from "#lib/api/tracks.ts";
+	import type { TrackAudioFile, TrackDetailed } from "#lib/api/tracksTypes.ts";
     import type {PageProps} from "./$types"
     import Button from "#lib/ui/Button.svelte";
 	import ListItem from "./ListItem.svelte";
